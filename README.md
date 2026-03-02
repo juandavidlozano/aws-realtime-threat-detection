@@ -1,4 +1,4 @@
-# SOC Automation Platform — AWS Real-Time Threat Detection
+﻿# SOC Automation Platform — AWS Real-Time Threat Detection
 
 > A real-time security operations platform built on AWS that detects, correlates, and responds to cloud threats — live, in a browser, with one click to block an attacker.
 
@@ -6,56 +6,29 @@
 
 ## 🎬 See It In Action
 
-### Full Attack Simulation (60 seconds)
-> *A 7-stage MITRE ATT&CK kill chain fires against a live AWS account. Watch the platform detect, correlate, and surface the threat in real time.*
-
-> 📹 **How to record this:**
-> 1. Open ScreenToGif, set region to the **full Cyber dashboard browser window**
-> 2. Start recording
-> 3. Run `python scripts/simulate_attack.py --severity Critical` in terminal
-> 4. Let it play until the C2 alert fires (~20 seconds)
-> 5. Stop, export as GIF — **this is your hero asset, put it first**
+### Full Attack Simulation
+*A 7-stage MITRE ATT&CK kill chain fires against a live AWS account. Watch the platform detect, correlate, and surface the threat in real time.*
 
 ![Full Attack Demo](assets/attack-demo.gif)
 
 ---
 
 ### Threat Correlation Card Firing
-> *Same attacker IP appears across CloudTrail, VPC Flow Logs, GuardDuty, and Route 53 — the engine correlates all 4 sources into one incident card with MITRE tags and a one-click Block IP button.*
-
-> 📹 **How to record this:**
-> 1. Record region = **just the correlation alert card** (right panel of Cyber dashboard)
-> 2. Run the attack script — wait for the CRITICAL card to pop in
-> 3. Slowly scroll through the card so the MITRE tags (T1078, T1552.004, T1562.008, T1071) are all visible
-> 4. Hover over the **🚫 Block IP in WAF** button at the end — don't click it yet (save that for the next GIF)
+*Same attacker IP appears across CloudTrail, VPC Flow Logs, GuardDuty, and Route 53 — the engine correlates all 4 sources into one incident card with MITRE tags and a one-click Block IP button.*
 
 ![Correlation Engine](assets/correlation-card.gif)
 
 ---
 
 ### Anomaly Detection — Log Silence Alert
-> *The attacker ran `DeleteTrail` to cover their tracks. Within seconds, the anomaly engine detected the 100% drop in Route 53 ingestion and fired a CRITICAL alert.*
-
-> 📹 **How to record this:**
-> 1. Record region = **the Pipeline Anomaly Alerts panel** (bottom-left or wherever it sits)
-> 2. Run the attack script
-> 3. Capture the moment the **CRITICAL: Route 53 ingestion dropped 100%** alert appears
-> 4. Let it linger 3 seconds so the viewer can read it — that's the whole GIF, short and punchy
+*The attacker ran `DeleteTrail` to cover their tracks. Within seconds, the anomaly engine detected the 100% drop in Route 53 ingestion and fired a CRITICAL alert.*
 
 ![Anomaly Detection](assets/anomaly-alert.gif)
 
 ---
 
-### Blocking the IP in AWS WAF (Live)
-> *One click. The platform calls the AWS WAFv2 API and adds the attacker IP to a real IP set attached to a real Web ACL — no console, no CLI.*
-
-> 📹 **How to record this (the most impressive asset):**
-> 1. **Before recording:** open the AWS Console → WAF → IP sets → `soc-block-list-prod` in a second window
-> 2. Set up a **split screen**: platform on the left, AWS console IP set page on the right
-> 3. Start recording the full split screen
-> 4. Click **🚫 Block IP in WAF** on the platform
-> 5. Immediately switch to AWS console and **refresh the IP set page** — the IP `185.220.101.47` appears
-> 6. This is money. No CLI. No console navigation. One click → real AWS resource updated.
+### Blocking the IP in AWS WAF — Live
+*One click. The platform calls the AWS WAFv2 API and adds the attacker IP to a real IP set attached to a real Web ACL — no console, no CLI.*
 
 ![WAF Block](assets/waf-block.gif)
 
@@ -120,7 +93,7 @@ Attack Events (AWS APIs)
         ▼
   Ingest Pipeline ──► OCSF Normalization
         │
-        ├──► Threat Correlation Engine ──► Alert: "Multi-Source Activity from X.X.X.X"  
+        ├──► Threat Correlation Engine ──► Alert: "Multi-Source Activity from X.X.X.X"
         │
         ├──► Anomaly Detection Engine  ──► Alert: "CloudTrail ingestion dropped 100%"
         │
@@ -141,22 +114,16 @@ Attack Events (AWS APIs)
 
 ### Cyber Dashboard — Live Threat Feed
 
-> 📸 **How to screenshot this:**
-> Run the attack script, wait until ALL alerts have fired (correlation card + anomaly alerts both visible), then take a full-window screenshot. You want the dashboard **full** — event feed scrolled down showing all 8 events, correlation card visible, anomaly panel showing both Route 53 and CloudTrail alerts. This is the "after" state.
-
 ![Cyber Dashboard](assets/cyber-dashboard.png)
 
 - Real-time event feed with source tagging (CloudTrail, GuardDuty, Route 53...)
 - Correlation cards with full attack timelines and MITRE ATT&CK tags
-- Anomaly alerts with baseline vs actual charts
+- Anomaly alerts with baseline vs actual
 - One-click IP blocking via WAF
 
 ---
 
 ### DE Dashboard — Infrastructure Control
-
-> 📸 **How to screenshot this:**
-> Make sure all 3 stacks are deployed (soc-guardduty, soc-waf, soc-demo-resources all showing CREATE_COMPLETE in green). Take a full-window screenshot. The "3 green stacks + Lambda functions listed" state is what you want — it shows real infrastructure, not empty panels.
 
 ![DE Dashboard](assets/de-dashboard.png)
 
@@ -194,7 +161,9 @@ Three CloudFormation stacks — all defined as IaC, all deployable from the DE d
 
 ## How This Relates to AWS Security Lake
 
-AWS Security Lake is Amazon's managed service for centralizing security data at scale — it ingests logs from CloudTrail, VPC Flow Logs, Route 53, GuardDuty, and third-party tools, normalizes everything into OCSF format, and stores it in S3 for long-term querying with Athena.
+AWS Security Lake centralizes security data at scale — ingesting logs from CloudTrail, VPC Flow Logs, Route 53, GuardDuty, normalizing to OCSF, and storing in S3 for Athena queries. This platform implements the same OCSF normalization on every ingest:
+
+![OCSF Normalizer](assets/security-lake-ocsf.png)
 
 This platform and Security Lake are **complementary layers**, not competitors:
 
@@ -220,11 +189,6 @@ AWS Log Sources (CloudTrail, VPC Flow Logs, GuardDuty, Route 53)
 ```
 
 The real-time layer catches and stops the attack. Security Lake stores the full record for the post-incident investigation, compliance report, or insurance claim.
-
-> 📸 **How to capture this:**
-> Go to **AWS Console → Security Lake → Data sources**. Take a screenshot showing the log sources listed (CloudTrail, VPC Flow Logs, Route 53, GuardDuty) with their OCSF mappings. This one screenshot says "I know what OCSF is and I know how Security Lake ingests data" — without needing to explain it. If Security Lake isn't enabled in your account, a screenshot of the **Security Lake architecture diagram from the AWS docs page** works just as well.
-
-![Security Lake OCSF](assets/security-lake-ocsf.png)
 
 ---
 
