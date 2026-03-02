@@ -1,4 +1,4 @@
-﻿![alt text](image.png)# SOC Automation Platform — AWS Real-Time Threat Detection
+﻿# SOC Automation Platform — AWS Real-Time Threat Detection
 
 > A real-time security operations platform built on AWS that detects, correlates, and responds to cloud threats — live, in a browser, with one click to block an attacker.
 
