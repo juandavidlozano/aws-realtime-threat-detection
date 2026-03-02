@@ -1,4 +1,4 @@
-﻿# SOC Automation Platform — AWS Real-Time Threat Detection
+﻿![alt text](image.png)# SOC Automation Platform — AWS Real-Time Threat Detection
 
 > A real-time security operations platform built on AWS that detects, correlates, and responds to cloud threats — live, in a browser, with one click to block an attacker.
 
@@ -87,25 +87,21 @@ This is not a mock. These are real AWS API calls:
 
 ## Architecture Overview
 
-```
-Attack Events (AWS APIs)
-        │
-        ▼
-  Ingest Pipeline ──► OCSF Normalization
-        │
-        ├──► Threat Correlation Engine ──► Alert: "Multi-Source Activity from X.X.X.X"
-        │
-        ├──► Anomaly Detection Engine  ──► Alert: "CloudTrail ingestion dropped 100%"
-        │
-        └──► Compliance Scanner        ──► Alert: "Stack missing RequiredTag: Owner"
-                │
-                ▼
-      WebSocket Broadcast
-                │
-        ┌───────┴───────┐
-        ▼               ▼
-  Cyber Dashboard   DE Dashboard
-  (Threat Feed)     (Infra Control)
+```mermaid
+flowchart TD
+    A["⚡ Attack Events — AWS APIs"] --> B["🔄 Ingest Pipeline"]
+    B --> C["📐 OCSF Normalization"]
+    C --> D["🔴 Threat Correlation Engine"]
+    C --> E["🟡 Anomaly Detection Engine"]
+    C --> F["🟢 Compliance Scanner"]
+    D --> G["🚨 Alert: Multi-Source Activity from X.X.X.X"]
+    E --> H["⚠️ Alert: CloudTrail ingestion dropped 100%"]
+    F --> I["📋 Alert: Stack missing RequiredTag: Owner"]
+    G --> J["📡 WebSocket Broadcast"]
+    H --> J
+    I --> J
+    J --> K["🖥️ Cyber Dashboard\nThreat Feed"]
+    J --> L["⚙️ DE Dashboard\nInfra Control"]
 ```
 
 ---
@@ -178,14 +174,13 @@ This platform and Security Lake are **complementary layers**, not competitors:
 
 ### How they work together in a real environment
 
-```
-AWS Log Sources (CloudTrail, VPC Flow Logs, GuardDuty, Route 53)
-        │
-        ├──► This Platform          →  Detect NOW  →  Block attacker in WAF
-        │                                              (seconds)
-        │
-        └──► AWS Security Lake      →  Store OCSF  →  Query history in Athena
-                                                       (compliance, forensics)
+```mermaid
+flowchart LR
+    SRC["☁️ AWS Log Sources\nCloudTrail · VPC Flow Logs\nGuardDuty · Route 53"]
+    SRC --> P["⚡ This Platform"]
+    SRC --> SL["🏛️ AWS Security Lake"]
+    P --> W["🚫 Block attacker in WAF\n— seconds —"]
+    SL --> ATH["🔍 Query history in Athena\n— compliance & forensics —"]
 ```
 
 The real-time layer catches and stops the attack. Security Lake stores the full record for the post-incident investigation, compliance report, or insurance claim.
